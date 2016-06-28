@@ -15,7 +15,6 @@ Installation instructions:
     $ chmod +x winetricks
     $ ./winetricks dotnet20 dotnet40
 
-
 3. Install Windows 7 SDK 7.1. Download it from http://www.microsoft.com/en-us/download/details.aspx?id=8279
     $ wine winsdk_web.exe
     - When in the component selection screen, choose ONLY these:
@@ -37,7 +36,7 @@ Installation instructions:
     - Prepend to INCLUDE: C:\Program Files\Microsoft Visual Studio 10.0\VC\include;C:\Program Files\Microsoft SDKs\Windows\v7.1\Include;
     - Prepend to LIB: C:\Program Files\Microsoft Visual Studio 10.0\VC\lib;C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib;
     - At this point, you should be able to run "wine cl" and "wine rc".
-    
+
 4. Create folders to contain the wrappers
     $ mkdir -p /home/user/msvc/bin
 
@@ -81,20 +80,6 @@ Instructions for setting up CMake:
 
 4. Open the file just copied, and adjust CMAKE_FIND_ROOT_PATH.
 
-5. Download CMake source: http://www.cmake.org/files/v2.6/cmake-2.6.4.tar.gz
-
-6. Unpack cmake source code.
-
-7. In a terminal, enter the cmake source folder:
-    $ cd /home/user/cmake-2.6.4
-
-8. Apply patch cmake-mt-return-value.patch from the wrapper source folder:
-   (see below for why this is needed)
-    $ patch -p1 < /path/to/wrapmsvc/cmake-mt-return-value.patch
-
-9. Build and install cmake to the msvc folder
-    $ ./configure --prefix /home/user/msvc
-    $ make install
 
 CMake usage instructions:
 
@@ -102,14 +87,3 @@ CMake usage instructions:
 
 2. Once in a shell where the wrapper was setup, use cmake with the following option:
     -DCMAKE_TOOLCHAIN_FILE=/home/user/win32-msvc/toolchain.cmake
-
-
-Why does CMake need a patch?
-
-The tool mt.exe used by CMake has a particular return code with some semantics,
-but the return code is beyond the range 0-255 that programs in can return in unix-like
-systems can return. Therefore the wrapper returns a different code to CMake, which
-causes it to assume the operation failed.
-This is solved by translating this particular return code to a particilar wrapper
-return code in the range. CMake than has to be patched to treat that error code the
-same way it treats the original one.
